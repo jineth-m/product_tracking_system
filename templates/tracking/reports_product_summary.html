@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Product Summary Report</h2>
+
+
+
+<div class="mb-3">
+  <a href="/reports/export/product-summary/csv/" class="btn btn-sm btn-outline-primary">
+    Download CSV
+  </a>
+  <a href="/reports/export/product-summary/excel/" class="btn btn-sm btn-outline-success">
+    Download Excel
+  </a>
+</div>
+
+
+<table border="1" cellpadding="5">
+<tr>
+    <th>Product</th>
+    <th>Total Sub Parts</th>
+    <th>Completed</th>
+    <th>Pending</th>
+    <th>Progress</th>
+</tr>
+
+{% for row in data %}
+<tr>
+    <td>{{ row.product.product_code }} - {{ row.product.product_name }}</td>
+    <td>{{ row.total }}</td>
+    <td>{{ row.completed }}</td>
+    <td>{{ row.pending }}</td>
+    <td>{{ row.progress }}%</td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}

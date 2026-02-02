@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load tz %}
+
+{% block content %}
+<h2>Product Details</h2>
+
+<h3>{{ product.product_code }} - {{ product.product_name }}</h3>
+
+<div class="progress mb-3">
+  <div class="progress-bar bg-success"
+       style="width: {{ progress }}%;">
+    {{ progress }}%
+  </div>
+</div>
+
+
+<table class="table table-bordered table-hover">
+  <thead class="table-light">
+    <tr>
+      <th>Sub Part Code</th>
+      <th>Name</th>
+      <th>Status</th>
+      <th>Comment</th>
+      <th>Updated By</th>
+      <th>Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for ps in subparts %}
+    <tr style="cursor:pointer"
+        onclick="window.location.href='/subparts/{{ ps.sub_part.id }}/history/'">
+      <td>{{ ps.sub_part.sub_part_code }}</td>
+      <td>{{ ps.sub_part.sub_part_name }}</td>
+      <td>
+        <span class="badge bg-info">{{ ps.current_status }}</span>
+      </td>
+      <td>{{ ps.comment }}</td>
+      <td>{{ ps.updated_by }}</td>
+      <td>{{ ps.updated_at }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<br>
+<a href="/products/">← Back to Product List</a>
+{% endblock %}

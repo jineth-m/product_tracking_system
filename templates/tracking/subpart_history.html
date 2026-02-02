@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-3">Sub Part History</h2>
+<h5 class="text-muted mb-4">
+    {{ subpart.sub_part_code }} — {{ subpart.sub_part_name }}
+</h5>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Old Status</th>
+            <th>New Status</th>
+            <th>Comment</th>
+            <th>Changed By</th>
+            <th>Date & Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for h in history %}
+            <tr>
+                <td>{{ h.old_status.name }}</td>
+                <td>{{ h.new_status.name }}</td>
+                <td>{{ h.comment|default:"-" }}</td>
+                <td>{{ h.changed_by.username }}</td>
+                <td>{{ h.changed_at|date:"Y-m-d H:i" }}</td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="5" class="text-center text-muted">
+                    No history available
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{% url 'pic_dashboard' %}" class="btn btn-secondary mt-3">
+    Back to Dashboard
+</a>
+
+{% endblock %}

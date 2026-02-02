@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Sub Part Status History Report</h2>
+
+<a href="/reports/">View Product Summary Report</a>
+<br><br>
+
+<div class="mb-3">
+  <a href="/reports/export/status-history/csv/" class="btn btn-sm btn-outline-primary">
+    Download CSV
+  </a>
+  <a href="/reports/export/status-history/excel/" class="btn btn-sm btn-outline-success">
+    Download Excel
+  </a>
+</div>
+
+
+<table border="1" cellpadding="5">
+<tr>
+    <th>Sub Part</th>
+    <th>Product</th>
+    <th>Old Status</th>
+    <th>New Status</th>
+    <th>Comment</th>
+    <th>Changed By</th>
+    <th>Date & Time</th>
+</tr>
+
+{% for h in history %}
+<tr>
+    <td>{{ h.sub_part.sub_part_code }}</td>
+    <td>{{ h.product.product_code }}</td>
+    <td>{{ h.old_status }}</td>
+    <td>{{ h.new_status }}</td>
+    <td>{{ h.comment }}</td>
+    <td>{{ h.changed_by }}</td>
+    <td>{{ h.changed_at }}</td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,64 @@
+/* ---------- GLOBAL ---------- */
+body {
+    font-family: "Segoe UI", Tahoma, sans-serif;
+    background-color: #f4f6f8;
+    margin: 0;
+}
+
+/* ---------- LOGIN PAGE ---------- */
+.login-wrapper {
+    min-height: calc(100vh - 70px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-card {
+    width: 380px;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.login-card h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.login-card label {
+    font-weight: 600;
+    display: block;
+    margin-top: 15px;
+}
+
+.login-card input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.login-card button {
+    width: 100%;
+    margin-top: 25px;
+    padding: 12px;
+    background-color: #f57c00;
+    border: none;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.login-card button:hover {
+    background-color: #e66a00;
+}
+
+.login-error {
+    color: red;
+    text-align: center;
+    margin-bottom: 10px;
+}

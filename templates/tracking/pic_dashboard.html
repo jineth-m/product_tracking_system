@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% load tz %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">PIC Dashboard</h2>
+<a href="{% url 'export_pic_dashboard_excel' %}"
+   class="btn btn-success mb-3">
+   Download Excel
+</a>
+
+    <!-- Search -->
+    <form method="get" class="mb-3">
+        <div class="input-group">
+            <input
+                type="text"
+                name="q"
+                value="{{ query }}"
+                class="form-control"
+                placeholder="Search by sub part code or name"
+            >
+            <button class="btn btn-primary">Search</button>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Sub Part Code</th>
+                    <th>Sub Part Name</th>
+                    <th>Sub Part Type</th>
+                    <th>Products</th>
+                    <th>Status</th>
+                    <th>Comment</th>
+                    <th>Last Updated</th>
+                    <th>Save</th>
+                    <th>History</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            {% for row in rows %}
+                <tr>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="sub_part_id" value="{{ row.sub_part.id }}">
+
+                        <!-- Sub Part Code -->
+                        <td>
+                            
+                                {{ row.sub_part.sub_part_code }}
+                            
+                        </td>
+
+                        <!-- Sub Part Name -->
+                        <td>{{ row.sub_part.sub_part_name }}</td>
+                        <td>{{ row.sub_part_type.name }}</td>
+
+
+                        <!-- Products -->
+                        <td>
+                            {% for product in row.products %}
+                                <span class="badge bg-secondary me-1">
+                                    {{ product.product_name }}
+                                </span>
+                            {% empty %}
+                                <span class="text-muted">—</span>
+                            {% endfor %}
+                        </td>
+
+                        <!-- Status -->
+                        <td>
+                            <select name="status" class="form-select" required>
+                                {% for status in statuses %}
+                                    <option value="{{ status.id }}"
+                                        {% if status == row.current_status %}selected{% endif %}
+                                    >
+                                        {{ status.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+
+                        <!-- Comment -->
+                        <td>
+                            <input
+                                type="text"
+                                name="comment"
+                                class="form-control"
+                                value="{{ row.comment }}"
+                            >
+                        </td>
+
+                        <!-- Last Updated -->
+                        <td class="text-muted">
+                            {{ row.updated_at|date:"Y-m-d H:i" }}
+                        </td>
+
+                        <!-- Save -->
+                        <td>
+                            <button type="submit" class="btn btn-success btn-sm">
+                                Save
+                            </button>
+                        </td>
+
+                        <!-- History -->
+                        <td>
+                            <a
+                                href="{% url 'subpart_history' row.sub_part.id %}"
+                                class="btn btn-sm btn-outline-secondary"
+                            >
+                                View
+                            </a>
+                        </td>
+                    </form>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center text-muted">
+                        No sub parts found
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+{% endblock %}
