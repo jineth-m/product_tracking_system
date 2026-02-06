@@ -109,7 +109,8 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get("postgresql://postgres:OBkQzxXNkvRNSDBggjqXRFhaTZefUEBc@Postgres.railway.internal:5432/railway")
+        conn_max_age=600,
+        ssl_require=True
     )
 }
 
