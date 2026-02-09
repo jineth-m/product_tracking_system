@@ -111,7 +111,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 import dj_database_url
 import os
 
-DATABASE_URL = os.environ.get("DATABASE_URL")
+
 
 DATABASES = {
     "default": dj_database_url.config(
@@ -169,3 +169,10 @@ USE_TZ = True
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
+if os.environ.get("RAILWAY_ENVIRONMENT"):
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+    if not User.objects.filter(username="admin").exists():
+        User.objects.create_superuser("admin", "admin@example.com", "admin123")
