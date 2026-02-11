@@ -36,6 +36,13 @@ urlpatterns = [
 
     path('dashboard/', pic_dashboard, name='pic_dashboard'),
 
+    path(
+    "products/range/<int:range_id>/excel/",
+    views.export_range_excel,
+    name="export_range_excel"
+),
+
+
 
     path("products/range/<int:range_id>/excel/", views.export_range_excel, name="export_range_excel"),
 

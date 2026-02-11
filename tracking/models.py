@@ -20,6 +20,48 @@ class Status(models.Model):
         return self.name
 
 
+
+# -----------------------------
+# PRODUCT TYPE STRUCTURE
+# -----------------------------
+
+class ProductMainType(models.Model):
+    """
+    Example:
+    - Local
+    - Export
+    """
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class ProductRange(models.Model):
+    """
+    Example:
+    Local → Range A
+    Local → Range B
+    Export → Range X
+    """
+    main_type = models.ForeignKey(
+        ProductMainType,
+        on_delete=models.CASCADE,
+        related_name="ranges"
+    )
+    name = models.CharField(max_length=100)
+
+    class Meta:
+        unique_together = ("main_type", "name")
+
+    def __str__(self):
+        return f"{self.main_type} / {self.name}"
+
+
+
+
+
+
 # -----------------------------
 # CORE ENTITIES
 # -----------------------------
@@ -139,38 +181,3 @@ class SubPartStatusHistory(models.Model):
     def __str__(self):
         return f"{self.sub_part} ({self.old_status} → {self.new_status})"
 
-# -----------------------------
-# PRODUCT TYPE STRUCTURE
-# -----------------------------
-
-class ProductMainType(models.Model):
-    """
-    Example:
-    - Local
-    - Export
-    """
-    name = models.CharField(max_length=100, unique=True)
-
-    def __str__(self):
-        return self.name
-
-
-class ProductRange(models.Model):
-    """
-    Example:
-    Local → Range A
-    Local → Range B
-    Export → Range X
-    """
-    main_type = models.ForeignKey(
-        ProductMainType,
-        on_delete=models.CASCADE,
-        related_name="ranges"
-    )
-    name = models.CharField(max_length=100)
-
-    class Meta:
-        unique_together = ("main_type", "name")
-
-    def __str__(self):
-        return f"{self.main_type} / {self.name}"
