@@ -28,6 +28,14 @@ class Product(models.Model):
     product_code = models.CharField(max_length=50, unique=True)
     product_name = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True)
+    product_range = models.ForeignKey(
+        ProductRange,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="products"
+    )
+
 
     def __str__(self):
         return f"{self.product_code} - {self.product_name}"
@@ -130,3 +138,39 @@ class SubPartStatusHistory(models.Model):
 
     def __str__(self):
         return f"{self.sub_part} ({self.old_status} → {self.new_status})"
+
+# -----------------------------
+# PRODUCT TYPE STRUCTURE
+# -----------------------------
+
+class ProductMainType(models.Model):
+    """
+    Example:
+    - Local
+    - Export
+    """
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class ProductRange(models.Model):
+    """
+    Example:
+    Local → Range A
+    Local → Range B
+    Export → Range X
+    """
+    main_type = models.ForeignKey(
+        ProductMainType,
+        on_delete=models.CASCADE,
+        related_name="ranges"
+    )
+    name = models.CharField(max_length=100)
+
+    class Meta:
+        unique_together = ("main_type", "name")
+
+    def __str__(self):
+        return f"{self.main_type} / {self.name}"

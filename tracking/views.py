@@ -15,42 +15,66 @@ from .models import (
     SubPart,
     Status,
     SubPartStatusHistory,
+    ProductMainType,
+    ProductRange,
 )
 from accounts.models import UserProfile
 
-
 # ----------------------------
-# PRODUCT LIST
+# PRODUCT LIST (Grouped by Type → Range)
 # ----------------------------
 def product_list(request):
-    query = request.GET.get('q', '').strip()
-    products = Product.objects.all()
+    query = request.GET.get("q", "").strip()
 
-    if query:
-        products = products.filter(
-            Q(product_code__icontains=query) |
-            Q(product_name__icontains=query)
-        )
+    # Prefetch hierarchy
+    main_types = ProductMainType.objects.prefetch_related(
+        "ranges__products"
+    )
 
-    product_data = []
+    grouped = []
 
-    for product in products:
-        total = ProductSubPart.objects.filter(product=product).count()
-        completed = ProductSubPart.objects.filter(
-            product=product,
-            current_status__name='Completed'
-        ).count()
+    for main in main_types:
+        range_blocks = []
 
-        progress = int((completed / total) * 100) if total > 0 else 0
+        for prange in main.ranges.all():
 
-        product_data.append({
-            'product': product,
-            'progress': progress,
+            products = prange.products.all()
+
+            if query:
+                products = products.filter(
+                    Q(product_code__icontains=query) |
+                    Q(product_name__icontains=query)
+                )
+
+            product_data = []
+
+            for product in products:
+                total = ProductSubPart.objects.filter(product=product).count()
+                completed = ProductSubPart.objects.filter(
+                    product=product,
+                    current_status__name="Completed"
+                ).count()
+
+                progress = int((completed / total) * 100) if total else 0
+
+                product_data.append({
+                    "product": product,
+                    "progress": progress,
+                })
+
+            range_blocks.append({
+                "range": prange,
+                "products": product_data,
+            })
+
+        grouped.append({
+            "main": main,
+            "ranges": range_blocks,
         })
 
-    return render(request, 'tracking/product_list.html', {
-        'product_data': product_data,
-        'query': query,
+    return render(request, "tracking/product_list.html", {
+        "grouped": grouped,
+        "query": query,
     })
 
 
@@ -586,6 +610,46 @@ def export_pic_dashboard_excel(request):
         content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
     response["Content-Disposition"] = 'attachment; filename="pic_dashboard.xlsx"'
+
+    wb.save(response)
+    return response
+
+
+def export_range_excel(request, range_id):
+    prange = get_object_or_404(ProductRange, id=range_id)
+    products = prange.products.all()
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = prange.name
+
+    ws.append([
+        "Product Code",
+        "Product Name",
+        "Progress (%)"
+    ])
+
+    for product in products:
+        total = ProductSubPart.objects.filter(product=product).count()
+        completed = ProductSubPart.objects.filter(
+            product=product,
+            current_status__name="Completed"
+        ).count()
+
+        progress = int((completed / total) * 100) if total else 0
+
+        ws.append([
+            product.product_code,
+            product.product_name,
+            progress
+        ])
+
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    response["Content-Disposition"] = (
+        f'attachment; filename="{prange.name}_products.xlsx"'
+    )
 
     wb.save(response)
     return response
