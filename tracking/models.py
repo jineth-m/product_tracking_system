@@ -20,43 +20,26 @@ class Status(models.Model):
         return self.name
 
 
-
 # -----------------------------
 # PRODUCT TYPE STRUCTURE
 # -----------------------------
 
 class ProductMainType(models.Model):
-    """
-    Example:
-    - Local
-    - Export
-    """
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=50, unique=True)  # Local / Export
 
     def __str__(self):
         return self.name
 
 
 class ProductRange(models.Model):
-    """
-    Example:
-    Local → Range A
-    Local → Range B
-    Export → Range X
-    """
-    main_type = models.ForeignKey(
-        ProductMainType,
-        on_delete=models.CASCADE,
-        related_name="ranges"
-    )
+    main_type = models.ForeignKey(ProductMainType, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
 
     class Meta:
         unique_together = ("main_type", "name")
 
     def __str__(self):
-        return f"{self.main_type} / {self.name}"
-
+        return f"{self.main_type} - {self.name}"
 
 
 
@@ -72,12 +55,12 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     product_range = models.ForeignKey(
         ProductRange,
-        on_delete=models.SET_NULL,
+        on_delete=models.PROTECT,
         null=True,
         blank=True,
         related_name="products"
     )
-
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.product_code} - {self.product_name}"

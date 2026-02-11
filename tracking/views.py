@@ -20,60 +20,66 @@ from .models import (
 )
 from accounts.models import UserProfile
 
+
 # ----------------------------
-# PRODUCT LIST (Grouped by Type → Range)
+# PRODUCT RANGE SELECTOR (Landing page)
 # ----------------------------
 def product_list(request):
-    query = request.GET.get("q", "").strip()
+    local_type = ProductMainType.objects.get(name="Local")
+    export_type = ProductMainType.objects.get(name="Export")
 
-    # Prefetch hierarchy
-    main_types = ProductMainType.objects.prefetch_related(
-        "ranges__products"
-    )
+    local_ranges = list(ProductRange.objects.filter(main_type=local_type))
+    export_ranges = list(ProductRange.objects.filter(main_type=export_type))
 
-    grouped = []
+    max_len = max(len(local_ranges), len(export_ranges))
 
-    for main in main_types:
-        range_blocks = []
+    rows = []
 
-        for prange in main.ranges.all():
-
-            products = prange.products.all()
-
-            if query:
-                products = products.filter(
-                    Q(product_code__icontains=query) |
-                    Q(product_name__icontains=query)
-                )
-
-            product_data = []
-
-            for product in products:
-                total = ProductSubPart.objects.filter(product=product).count()
-                completed = ProductSubPart.objects.filter(
-                    product=product,
-                    current_status__name="Completed"
-                ).count()
-
-                progress = int((completed / total) * 100) if total else 0
-
-                product_data.append({
-                    "product": product,
-                    "progress": progress,
-                })
-
-            range_blocks.append({
-                "range": prange,
-                "products": product_data,
-            })
-
-        grouped.append({
-            "main": main,
-            "ranges": range_blocks,
+    for i in range(max_len):
+        rows.append({
+            "local": local_ranges[i] if i < len(local_ranges) else None,
+            "export": export_ranges[i] if i < len(export_ranges) else None,
         })
 
-    return render(request, "tracking/product_list.html", {
-        "grouped": grouped,
+    return render(request, "tracking/product_ranges.html", {
+        "rows": rows
+    })
+
+
+# ----------------------------
+# PRODUCTS INSIDE A RANGE
+# ----------------------------
+def products_by_range(request, range_id):
+    query = request.GET.get("q", "").strip()
+
+    prange = get_object_or_404(ProductRange, id=range_id)
+    products = prange.products.all()
+
+    if query:
+        products = products.filter(
+            Q(product_code__icontains=query) |
+            Q(product_name__icontains=query)
+        )
+
+    product_data = []
+
+    for product in products:
+        total = ProductSubPart.objects.filter(product=product).count()
+        completed = ProductSubPart.objects.filter(
+            product=product,
+            current_status__name="Completed"
+        ).count()
+
+        progress = int((completed / total) * 100) if total else 0
+
+        product_data.append({
+            "product": product,
+            "progress": progress,
+        })
+
+    return render(request, "tracking/products_by_range.html", {
+        "range": prange,
+        "product_data": product_data,
         "query": query,
     })
 
@@ -653,3 +659,63 @@ def export_range_excel(request, range_id):
 
     wb.save(response)
     return response
+
+
+# ----------------------------
+# PRODUCT RANGE SELECTOR
+# ----------------------------
+def product_ranges(request):
+    local_type = ProductMainType.objects.get(name="Local")
+    export_type = ProductMainType.objects.get(name="Export")
+
+    local_ranges = list(ProductRange.objects.filter(main_type=local_type))
+    export_ranges = list(ProductRange.objects.filter(main_type=export_type))
+
+    max_len = max(len(local_ranges), len(export_ranges))
+
+    rows = []
+
+    for i in range(max_len):
+        rows.append({
+            "local": local_ranges[i] if i < len(local_ranges) else None,
+            "export": export_ranges[i] if i < len(export_ranges) else None,
+        })
+
+    return render(request, "tracking/product_ranges.html", {
+        "rows": rows
+    })
+
+
+def products_by_range(request, range_id):
+    prange = get_object_or_404(ProductRange, id=range_id)
+    query = request.GET.get("q", "").strip()
+
+    products = prange.products.all()
+
+    if query:
+        products = products.filter(
+            Q(product_code__icontains=query) |
+            Q(product_name__icontains=query)
+        )
+
+    product_data = []
+
+    for product in products:
+        total = ProductSubPart.objects.filter(product=product).count()
+        completed = ProductSubPart.objects.filter(
+            product=product,
+            current_status__name="Completed"
+        ).count()
+
+        progress = int((completed / total) * 100) if total else 0
+
+        product_data.append({
+            "product": product,
+            "progress": progress,
+        })
+
+    return render(request, "tracking/products_by_range.html", {
+        "prange": prange,
+        "product_data": product_data,
+        "query": query,
+    })

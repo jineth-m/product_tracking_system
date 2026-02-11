@@ -3,6 +3,8 @@ from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
 from import_export.admin import ImportExportModelAdmin
 
+
+
 from .models import (
     Product,
     SubPart,
@@ -61,6 +63,24 @@ class ProductAdmin(ImportExportModelAdmin):
 # =====================================================
 # SUB PART RESOURCE
 # =====================================================
+class ProductResource(resources.ModelResource):
+    product_range = fields.Field(
+        column_name="product_range",
+        attribute="product_range",
+        widget=ForeignKeyWidget(ProductRange, "id")   # ← change here
+    )
+
+    class Meta:
+        model = Product
+        fields = ("product_code", "product_name", "product_range")
+        import_id_fields = ("product_code",)
+        skip_unchanged = True
+        report_skipped = True
+
+
+# =====================================================
+# SUB PART RESOURCE
+# =====================================================
 class SubPartResource(resources.ModelResource):
     sub_part_type = fields.Field(
         column_name="sub_part_type",
@@ -82,6 +102,9 @@ class SubPartAdmin(ImportExportModelAdmin):
     list_display = ("sub_part_code", "sub_part_name", "sub_part_type")
     search_fields = ("sub_part_code", "sub_part_name")
     list_filter = ("sub_part_type",)
+
+
+
 
 
 # =====================================================
@@ -169,3 +192,4 @@ class SubPartStatusHistoryAdmin(admin.ModelAdmin):
 
     def has_change_permission(self, request, obj=None):
         return False
+

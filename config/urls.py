@@ -26,69 +26,79 @@ urlpatterns = [
 
     path('', home_view, name='home'),
 
+    # Auth
     path('login/', auth_views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 
-    path('products/', product_list, name='product_list'),
-    path('products/<int:product_id>/', product_detail, name='product_detail'),
+    # ------------------------------------------------
+    # PRODUCT RANGE LANDING PAGE
+    # ------------------------------------------------
+    path('products/', views.product_ranges, name='product_ranges'),
 
-    path('subparts/<int:subpart_id>/history/', subpart_history, name='subpart_history'),
+    # Products inside a range
+    path(
+        'products/range/<int:range_id>/',
+        views.products_by_range,
+        name='products_by_range'
+    ),
 
+    # Excel export per range
+    path(
+        'products/range/<int:range_id>/excel/',
+        views.export_range_excel,
+        name='range_excel'
+    ),
+
+    # Product detail
+    path("products/<int:product_id>/", views.product_detail, name="product_detail"),
+
+    # ------------------------------------------------
+    # SUB PART HISTORY
+    # ------------------------------------------------
+    path(
+        'subparts/<int:subpart_id>/history/',
+        subpart_history,
+        name='subpart_history'
+    ),
+
+    # ------------------------------------------------
+    # PIC DASHBOARD
+    # ------------------------------------------------
     path('dashboard/', pic_dashboard, name='pic_dashboard'),
 
     path(
-    "products/range/<int:range_id>/excel/",
-    views.export_range_excel,
-    name="export_range_excel"
-),
+        'dashboard/export/',
+        views.export_pic_dashboard_excel,
+        name='export_pic_dashboard_excel'
+    ),
 
-
-
-    path("products/range/<int:range_id>/excel/", views.export_range_excel, name="export_range_excel"),
-
-
-    path(
-    "dashboard/export/",
-    views.export_pic_dashboard_excel,
-    name="export_pic_dashboard_excel",
-),
-
-
+    # ------------------------------------------------
+    # REPORTS
+    # ------------------------------------------------
     path('reports/', reports, name='reports'),
-    path(
-    "products/excel/",
-    views.product_list_excel,
-    name="product_list_excel"
-),
-
-
 
     path(
-    "reports/product/<int:product_id>/excel/",
-    views.product_progress_excel,
-    name="product_progress_excel",
-),
-
-
-
+        'reports/product/<int:product_id>/',
+        views.product_progress_report,
+        name='product_progress'
+    ),
 
     path(
-    "reports/product/<int:product_id>/",
-    views.product_progress_report,
-    name="product_progress"
-),
+        'reports/product/<int:product_id>/excel/',
+        views.product_progress_excel,
+        name='product_progress_excel'
+    ),
 
-
-    # Exports
+    # Global exports
     path('reports/export/product-summary/csv/', export_product_summary_csv),
     path('reports/export/product-summary/excel/', export_product_summary_excel),
     path('reports/export/status-history/csv/', export_status_history_csv),
     path('reports/export/status-history/excel/', export_status_history_excel),
+
+    # Product summary Excel
     path(
-    'subparts/<int:subpart_id>/history/',
-    views.subpart_history,
-    name='subpart_history'
-),
-
-
+        'products/excel/',
+        views.product_list_excel,
+        name='product_list_excel'
+    ),
 ]

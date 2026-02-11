@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Product Ranges</h2>
+
+<table class="table table-bordered text-center">
+    <thead class="table-dark">
+        <tr>
+            <th>Local</th>
+            <th>Export</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in rows %}
+        <tr>
+            <td>
+                {% if row.local %}
+                    <a href="{% url 'products_by_range' row.local.id %}">
+                        {{ row.local.name }}
+                    </a>
+                {% endif %}
+            </td>
+            <td>
+                {% if row.export %}
+                    <a href="{% url 'products_by_range' row.export.id %}">
+                        {{ row.export.name }}
+                    </a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
