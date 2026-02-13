@@ -29,41 +29,54 @@
     </thead>
 
     <tbody>
-    {% for item in product_data %}
-        <tr style="cursor:pointer"
-            onclick="window.location.href='/products/{{ item.product.id }}/'">
+{% for item in product_data %}
+<tr class="clickable-row"
+    data-href="{% url 'product_detail' item.product.id %}"
+    style="cursor:pointer">
 
-            <td>{{ item.product.product_code }}</td>
-            <td>{{ item.product.product_name }}</td>
+    <td>{{ item.product.product_code }}</td>
+    <td>{{ item.product.product_name }}</td>
 
-            <td>
-                <div class="progress">
-                    <div class="progress-bar bg-success"
-                         style="width: {{ item.progress }}%;">
-                        {{ item.progress }}%
-                    </div>
-                </div>
-            </td>
+    <td>
+        <div class="progress">
+            <div class="progress-bar bg-success"
+                 style="width: {{ item.progress }}%;">
+                {{ item.progress }}%
+            </div>
+        </div>
+    </td>
 
-            <td>
-                <a href="{% url 'product_progress_excel' item.product.id %}"
-                   class="btn btn-sm btn-success">
-                    Download Excel
-                </a>
-            </td>
-        </tr>
-    {% empty %}
-        <tr>
-            <td colspan="4" class="text-muted text-center">
-                No products in this range
-            </td>
-        </tr>
-    {% endfor %}
-    </tbody>
+    <td>
+        <a href="{% url 'product_progress_excel' item.product.id %}"
+           class="btn btn-sm btn-success"
+           onclick="event.stopPropagation();">
+            Download Excel
+        </a>
+    </td>
+
+</tr>
+{% empty %}
+<tr>
+    <td colspan="4" class="text-muted text-center">
+        No products in this range
+    </td>
+</tr>
+{% endfor %}
+</tbody>
+
 </table>
 
 <a href="{% url 'product_ranges' %}" class="btn btn-secondary mt-3">
     ← Back to ranges
 </a>
+
+<script>
+document.querySelectorAll(".clickable-row").forEach(row => {
+    row.addEventListener("click", () => {
+        window.location = row.dataset.href;
+    });
+});
+</script>
+
 
 {% endblock %}
