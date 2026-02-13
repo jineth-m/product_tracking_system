@@ -170,4 +170,5 @@ USE_TZ = True
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+PASSWORD_CHANGE_REDIRECT_URL = "password_change_done"
 

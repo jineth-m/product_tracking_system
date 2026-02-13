@@ -59,6 +59,14 @@
 </div>
 {% endif %}
 
+{% if user.is_authenticated %}
+<a href="{% url 'password_change' %}" class="btn btn-warning">
+    🔒 Change Password
+</a>
+{% endif %}
+
+
+
 <!-- FOOTER -->
 <div class="text-center text-muted mt-5">
     <hr>
