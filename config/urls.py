@@ -101,23 +101,28 @@ urlpatterns = [
         views.product_list_excel,
         name='product_list_excel'
     ),
+
+
+
+    # Password change
+    path(
+        "password-change/",
+        auth_views.PasswordChangeView.as_view(
+            template_name="registration/password_change.html"
+        ),
+        name="password_change"
+    ),
+
+    # After password change → logout → login
+    path(
+        "password-change/done/",
+        auth_views.LogoutView.as_view(next_page="login"),
+        name="password_change_done"
+),
+
 ]
 
 
 
 
-# Password change
-path(
-    "password-change/",
-    auth_views.PasswordChangeView.as_view(
-        template_name="registration/password_change.html"
-    ),
-    name="password_change"
-),
 
-# Password change success → logout
-path(
-    "password-change/done/",
-    auth_views.LogoutView.as_view(next_page="login"),
-    name="password_change_done"
-),
