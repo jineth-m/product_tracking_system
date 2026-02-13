@@ -1,32 +1,54 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>Product Ranges</h2>
+<h2 class="mb-4">Product Ranges</h2>
 
-<table class="table table-bordered text-center">
+<style>
+.range-cell {
+    cursor: pointer;
+    height: 60px;
+    vertical-align: middle !important;
+    font-weight: 500;
+    transition: background 0.15s ease-in-out;
+}
+
+.range-cell:hover {
+    background-color: #f0f0f0;
+}
+</style>
+
+<table class="table table-bordered text-center table-hover">
     <thead class="table-dark">
         <tr>
-            <th>Local</th>
-            <th>Export</th>
+            <th style="width: 50%;">Local</th>
+            <th style="width: 50%;">Export</th>
         </tr>
     </thead>
+
     <tbody>
         {% for row in rows %}
         <tr>
-            <td>
+
+            <!-- LOCAL CELL -->
+            <td class="range-cell"
                 {% if row.local %}
-                    <a href="{% url 'products_by_range' row.local.id %}">
-                        {{ row.local.name }}
-                    </a>
+                onclick="window.location.href='{% url 'products_by_range' row.local.id %}'"
+                {% endif %}>
+                {% if row.local %}
+                    {{ row.local.name }}
                 {% endif %}
             </td>
-            <td>
+
+            <!-- EXPORT CELL -->
+            <td class="range-cell"
                 {% if row.export %}
-                    <a href="{% url 'products_by_range' row.export.id %}">
-                        {{ row.export.name }}
-                    </a>
+                onclick="window.location.href='{% url 'products_by_range' row.export.id %}'"
+                {% endif %}>
+                {% if row.export %}
+                    {{ row.export.name }}
                 {% endif %}
             </td>
+
         </tr>
         {% endfor %}
     </tbody>
