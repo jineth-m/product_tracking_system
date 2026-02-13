@@ -5,7 +5,6 @@ from django.contrib.auth import views as auth_views
 from django.shortcuts import render
 
 from tracking.views import (
-    product_list,
     product_detail,
     subpart_history,
     pic_dashboard,

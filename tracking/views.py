@@ -688,8 +688,8 @@ def product_ranges(request):
 
 def products_by_range(request, range_id):
     prange = get_object_or_404(ProductRange, id=range_id)
-    query = request.GET.get("q", "").strip()
 
+    query = request.GET.get("q", "").strip()
     products = prange.products.all()
 
     if query:
@@ -715,7 +715,7 @@ def products_by_range(request, range_id):
         })
 
     return render(request, "tracking/products_by_range.html", {
-        "prange": prange,
+        "range": prange,
         "product_data": product_data,
         "query": query,
     })
