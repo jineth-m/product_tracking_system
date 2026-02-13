@@ -60,9 +60,11 @@
 {% endif %}
 
 {% if user.is_authenticated %}
+<div class="text-center mt-5">
 <a href="{% url 'password_change' %}" class="btn btn-warning">
     🔒 Change Password
 </a>
+</div>
 {% endif %}
 
 
