@@ -67,7 +67,7 @@ def products_by_range(request, range_id):
         total = ProductSubPart.objects.filter(product=product).count()
         completed = ProductSubPart.objects.filter(
             product=product,
-            current_status__name="Completed"
+            current_status__name="Ok"
         ).count()
 
         progress = int((completed / total) * 100) if total else 0
@@ -97,7 +97,7 @@ def product_detail(request, product_id):
     )
 
     total = subparts.count()
-    completed = subparts.filter(current_status__name='Completed').count()
+    completed = subparts.filter(current_status__name='Ok').count()
     progress = int((completed / total) * 100) if total > 0 else 0
 
     return render(request, 'tracking/product_detail.html', {
@@ -272,7 +272,7 @@ def reports(request):
 
         total = subparts.count()
         completed = subparts.filter(
-            current_status__name__iexact="Completed"
+            current_status__name__iexact="Ok"
         ).count()
 
         pending = total - completed
@@ -314,7 +314,7 @@ def export_product_summary_csv(request):
         total = ProductSubPart.objects.filter(product=product).count()
         completed = ProductSubPart.objects.filter(
             product=product,
-            current_status__name='Completed'
+            current_status__name='ok'
         ).count()
         progress = int((completed / total) * 100) if total else 0
 
@@ -349,7 +349,7 @@ def export_product_summary_excel(request):
         total = ProductSubPart.objects.filter(product=product).count()
         completed = ProductSubPart.objects.filter(
             product=product,
-            current_status__name='Completed'
+            current_status__name='OK'
         ).count()
         progress = int((completed / total) * 100) if total else 0
 
@@ -521,7 +521,7 @@ def product_list_excel(request):
         total = ProductSubPart.objects.filter(product=product).count()
         completed = ProductSubPart.objects.filter(
             product=product,
-            current_status__name="Completed"
+            current_status__name="Ok"
         ).count()
         pending = total - completed
         progress = int((completed / total) * 100) if total else 0
@@ -639,7 +639,7 @@ def export_range_excel(request, range_id):
         total = ProductSubPart.objects.filter(product=product).count()
         completed = ProductSubPart.objects.filter(
             product=product,
-            current_status__name="Completed"
+            current_status__name="Ok"
         ).count()
 
         progress = int((completed / total) * 100) if total else 0
@@ -704,7 +704,7 @@ def products_by_range(request, range_id):
         total = ProductSubPart.objects.filter(product=product).count()
         completed = ProductSubPart.objects.filter(
             product=product,
-            current_status__name="Completed"
+            current_status__name="Ok"
         ).count()
 
         progress = int((completed / total) * 100) if total else 0
